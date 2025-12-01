@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "peak-content"
+version = "0.1.0"
+description = "Predict best posting times and trending topics for TikTok/Instagram content."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.1",
+    "numpy>=1.26",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.1",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0",
+    "tqdm>=4.66",
+    "pyarrow>=16.0",
+    "jupyter>=1.0",
+    "notebook>=7.0",
+    "statsmodels>=0.14",
+    "streamlit>=1.32",
+    "scipy>=1.11"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "black>=24.3",
+    "ruff>=0.5"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
