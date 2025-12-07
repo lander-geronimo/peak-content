@@ -20,3 +20,7 @@ Every script in `src/` should include concise, beginner-friendly comments that e
 3. Run `pre-commit install` once we add hooks (optional future step).
 
 Add new tools/libraries directly to `pyproject.toml` so every collaborator shares the same environment.
+
+## Data Audit Notes
+
+Raw TikTok data currently lives in `data/raw/tiktok_merged_data_deduplicated.csv` (7,225 rows, 14 columns). A lightweight audit summary, including missing-value counts and example rows, is in `reports/data_audit.md`. Review that file before updating schemas or ETL logic so we keep assumptions aligned.
