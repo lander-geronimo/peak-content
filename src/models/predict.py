@@ -1,4 +1,4 @@
-"""CLI helper to score posts with the trained model."""
+"""CLI helper to score posts with the trained model. """
 
 from __future__ import annotations
 
