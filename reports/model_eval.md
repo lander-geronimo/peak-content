@@ -4,8 +4,8 @@
 - **Accuracy:** 1.000
 - **F1 Score:** 1.000
 - **ROC-AUC:** 1.000
-- **Confusion Matrix:** (omitted — rerun `python -m src.models.evaluate --generate-figures` to export PNGs)
-- **ROC Curve:** (omitted — rerun `python -m src.models.evaluate --generate-figures` to export PNGs)
+- **Confusion Matrix:** (omitted — rerun with `--generate-figures` if needed)
+- **ROC Curve:** (omitted — rerun with `--generate-figures` if needed)
 
 ## Classification Report
 
