@@ -79,13 +79,27 @@ python -m src.models.evaluate \
 
 Add `--generate-figures` (and optionally `MPLCONFIGDIR=.matplotlib` on macOS sandboxes) to save PNGs for presentations. By default the script prints where to regenerate them without committing large binaries.
 
+## Scoring New Posts
+
+Use the prediction helper to load the saved pipeline (`models/random_forest.joblib`) and score any feature matrix that matches the training schema:
+
+```bash
+python -m src.models.predict \
+  --model models/random_forest.joblib \
+  --features data/features/training_set.parquet \
+  --output reports/predictions.csv
+```
+
+Pass a different parquet path (e.g., from a new scrape) and optional `--limit` to score only the latest rows. The output CSV contains metadata (`video_id`, `author`, `created_at`) alongside `viral_probability` and the binary prediction.
+
 ## Exploratory Analysis & Insights
 
 - Explore engagement vs. time/day and trending hashtags/audio in `notebooks/eda_best_time.ipynb`.
-- Print a CLI “dashboard” summary of best posting windows and top hashtags/audio:
+- Print a CLI “dashboard” summary or launch the Streamlit UI:
 
 ```bash
-python -m src.visualization.dashboard --features data/features/training_set.parquet
+python -m src.visualization.dashboard --mode cli        # terminal summary
+/Users/jessegraham/Library/Python/3.9/bin/streamlit run src/visualization/dashboard.py  # interactive dashboard
 ```
 
-Adjust `--top-k` to show more rows. This command simply reads the feature matrix and reports the highest-performing hours, weekdays, and hashtag counts.
+Add `--mode streamlit` if you launch via `python -m ...` so it always renders the browser UI. The same trend insights (best hours/days, trending hashtags/audio) power both modes.
