@@ -1,8 +1,4 @@
-"""Train baseline classifiers to predict whether a TikTok post will go viral.
-
-The script is intentionally gentle for beginners: every major block is
-annotated and the defaults can be overridden from the CLI when needed.
-"""
+"""Train baseline classifiers to predict whether a TikTok post will go viral."""
 
 from __future__ import annotations
 
