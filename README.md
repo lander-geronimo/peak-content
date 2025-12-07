@@ -35,6 +35,19 @@ python -m src.etl.clean_tiktok --input data/raw/tiktok_merged_data_deduplicated.
 
 The script logs missing-value counts so we can catch upstream scraping issues quickly.
 
+## Feature Engineering
+
+Transform cleaned posts into a model-ready feature matrix and daily trend summary:
+
+```bash
+python -m src.features.build_features \
+  --input data/processed/posts.parquet \
+  --output data/features/training_set.parquet \
+  --trend-summary reports/trend_metrics.json
+```
+
+The output file contains 33 engineered columns plus the binary label `is_viral` (top quartile of plays-per-hour). Re-run this command whenever new cleaned data is available.
+
 ## Loading Data into PostgreSQL
 
 1. Create a database and run the schema in `db/schema.sql`.
@@ -42,3 +55,26 @@ The script logs missing-value counts so we can catch upstream scraping issues qu
 3. Execute the loader: `python -m src.data.load_to_db --csv-path data/raw/tiktok_merged_data_deduplicated.csv`.
 
 The loader inserts creators first and then posts. It uses `ON CONFLICT DO NOTHING`, so re-running it is safe and will simply skip rows that already exist.
+
+## Model Training & Evaluation
+
+Train Logistic Regression, Random Forest, and Gradient Boosting classifiers, log cross-validation metrics, and persist the best pipeline (default: `models/random_forest.joblib`):
+
+```bash
+python -m src.models.train \
+  --features data/features/training_set.parquet \
+  --model-dir models \
+  --report reports/model_metrics.json
+```
+
+Generate hold-out evaluation plots + markdown summary:
+
+```bash
+MPLCONFIGDIR=.matplotlib python -m src.models.evaluate \
+  --features data/features/training_set.parquet \
+  --metrics reports/model_metrics.json \
+  --report reports/model_eval.md \
+  --figures-dir reports/figures
+```
+
+The evaluation script creates a confusion matrix, ROC curve, and a concise report that classmates can drop into their final presentation.

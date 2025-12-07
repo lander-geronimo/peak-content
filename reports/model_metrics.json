@@ -1,0 +1,24 @@
+{
+  "best_model_path": "models/random_forest.joblib",
+  "best_model_name": "random_forest",
+  "metrics": [
+    {
+      "model": "logistic_regression",
+      "roc_auc": 0.9999890532014408,
+      "f1": 0.98048048428903,
+      "accuracy": 0.9896193771626297
+    },
+    {
+      "model": "random_forest",
+      "roc_auc": 1.0,
+      "f1": 1.0,
+      "accuracy": 1.0
+    },
+    {
+      "model": "gradient_boosting",
+      "roc_auc": 1.0,
+      "f1": 1.0,
+      "accuracy": 1.0
+    }
+  ]
+}

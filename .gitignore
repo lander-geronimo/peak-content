@@ -1,4 +1,6 @@
 # Ignore processed & feature artifacts
 data/processed/
 data/features/
+.matplotlib/
+/models/
 
