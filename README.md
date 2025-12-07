@@ -78,3 +78,14 @@ python -m src.models.evaluate \
 ```
 
 Add `--generate-figures` (and optionally `MPLCONFIGDIR=.matplotlib` on macOS sandboxes) to save PNGs for presentations. By default the script prints where to regenerate them without committing large binaries.
+
+## Exploratory Analysis & Insights
+
+- Explore engagement vs. time/day and trending hashtags/audio in `notebooks/eda_best_time.ipynb`.
+- Print a CLI “dashboard” summary of best posting windows and top hashtags/audio:
+
+```bash
+python -m src.visualization.dashboard --features data/features/training_set.parquet
+```
+
+Adjust `--top-k` to show more rows. This command simply reads the feature matrix and reports the highest-performing hours, weekdays, and hashtag counts.
