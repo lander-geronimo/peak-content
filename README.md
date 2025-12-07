@@ -25,6 +25,16 @@ Add new tools/libraries directly to `pyproject.toml` so every collaborator share
 
 Raw TikTok data currently lives in `data/raw/tiktok_merged_data_deduplicated.csv` (7,225 rows, 14 columns). A lightweight audit summary, including missing-value counts and example rows, is in `reports/data_audit.md`. Review that file before updating schemas or ETL logic so we keep assumptions aligned.
 
+## Cleaning Raw Data
+
+Run the ETL cleaner to standardize timestamps, hashtags, and engagement velocity, and to emit a `Parquet` artifact for modeling:
+
+```bash
+python -m src.etl.clean_tiktok --input data/raw/tiktok_merged_data_deduplicated.csv --output data/processed/posts.parquet
+```
+
+The script logs missing-value counts so we can catch upstream scraping issues quickly.
+
 ## Loading Data into PostgreSQL
 
 1. Create a database and run the schema in `db/schema.sql`.
