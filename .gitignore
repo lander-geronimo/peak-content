@@ -4,5 +4,5 @@ data/features/
 .cache/
 .matplotlib/
 .fontconfig/
-models/
+/models/
 
