@@ -1,3 +1,4 @@
-# Ignore processed data artifacts
+# Ignore processed & feature artifacts
 data/processed/
+data/features/
 

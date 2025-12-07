@@ -1,0 +1,71 @@
+{
+  "rows": 7225,
+  "features": 60,
+  "viral_threshold": 75000.0,
+  "date_range": {
+    "min_created": "2025-04-13 21:36:16+00:00",
+    "max_created": "2025-05-24 21:52:44+00:00"
+  },
+  "best_hours": {
+    "9.0": 119445.63492063491,
+    "11.0": 108310.45805739514,
+    "10.0": 99448.89112903226,
+    "14.0": 99330.64393939394,
+    "12.0": 99307.29166666666
+  },
+  "best_weekdays": {
+    "1.0": 88489.5375676536,
+    "2.0": 87891.8787202381,
+    "5.0": 83987.5400160064,
+    "0.0": 83330.16025641025,
+    "4.0": 72056.95308449975
+  },
+  "top_hashtags_overall": {
+    "fyp": 100,
+    "\u044e\u043c\u043e\u0440\u043f\u0440\u0438\u043a\u043e\u043b\u043a\u0440\u0443\u0433\u0438": 10,
+    "fypviral": 10,
+    "foryou": 8,
+    "fyp\u30b7": 8,
+    "fypforyou": 7,
+    "streameruniversity": 6,
+    "lanializafypforyoupage": 5,
+    "foryoupagefyp": 5,
+    "tiktokforyou": 5
+  },
+  "top_hashtags_recent": {
+    "history4thofjulycelebration": 3.1888544891640866,
+    "humorcouplecouolegoalsrisasnoviosparejasfunnytiktoksusto": 3.1888544891640866,
+    "houstonrestaurantsplacestovisit": 3.1888544891640866,
+    "houstontxthingstodohoustontexashoustoncheckinplaygroundsplashpadhoustonsplashpadsplashsummervibe": 3.1888544891640866,
+    "howironic": 3.1888544891640866,
+    "humorcomediafypviraltiktok": 3.1888544891640866,
+    "humorcomediahumordiversionamigosreels": 3.1888544891640866,
+    "humorcomediaviral\ud83d\ude02": 3.1888544891640866,
+    "hungergamessunriseonthereaping": 3.1888544891640866,
+    "horrorhorrortokhorrormovierecommendationmoviecinemaannabelleconjuringthexonjuringtheconjuringhouse20102020": 3.1888544891640866
+  },
+  "top_audios_overall": {
+    "original sound": 3512,
+    "sonido original": 366,
+    "\u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u0437\u0432\u0443\u043a": 350,
+    "ece marketing airball": 107,
+    "som original": 84,
+    "son original": 42,
+    "originalton": 39,
+    "new flame (but i promise you) (feat. usher & rick ross)": 31,
+    "bunna summa": 26,
+    "western music: arizona dreaming": 18
+  },
+  "top_audios_recent": {
+    "original sound": 1109,
+    "sonido original": 112,
+    "\u043e\u0440\u0438\u0433\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u0437\u0432\u0443\u043a": 108,
+    "ece marketing airball": 40,
+    "som original": 19,
+    "son original": 13,
+    "new flame (but i promise you) (feat. usher & rick ross)": 11,
+    "i aint got no panties on on the dance flooo": 8,
+    "bunna summa": 7,
+    "shake it to the max (fly) (remix)": 7
+  }
+}
