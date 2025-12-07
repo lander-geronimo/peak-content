@@ -50,11 +50,14 @@ def load_features(path: Path, limit: int | None) -> pd.DataFrame:
     return df
 
 
-def prepare_features(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def prepare_features(
+    df: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series | None]:
     meta_cols = [col for col in ["video_id", "author", "created_at"] if col in df.columns]
     meta = df[meta_cols].copy()
+    y_true = df["is_viral"].copy() if "is_viral" in df.columns else None
     X = df.drop(columns=[col for col in DROP_COLS if col in df.columns])
-    return X, meta
+    return X, meta, y_true
 
 
 def main() -> None:
@@ -63,7 +66,7 @@ def main() -> None:
         raise FileNotFoundError(f"{args.model} not found. Train a model first.")
 
     df = load_features(args.features, args.limit)
-    X, meta = prepare_features(df)
+    X, meta, y_true = prepare_features(df)
 
     model = joblib.load(args.model)
     proba = model.predict_proba(X)[:, 1]
@@ -72,6 +75,8 @@ def main() -> None:
     result = meta.copy()
     result["viral_probability"] = proba
     result["is_viral_prediction"] = preds
+    if y_true is not None:
+        result["is_viral_actual"] = y_true.values
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(args.output, index=False)
