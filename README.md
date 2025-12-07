@@ -90,7 +90,7 @@ python -m src.models.predict \
   --output reports/predictions.csv
 ```
 
-Pass a different parquet path (e.g., from a new scrape) and optional `--limit` to score only the latest rows. The output CSV contains metadata (`video_id`, `author`, `created_at`) alongside `viral_probability`, the binary prediction, and (when present) `is_viral_actual` so you can compare predictions to the true label.
+Pass a different parquet path (e.g., from a new scrape) and optional `--limit` to score only the latest rows. The output CSV contains metadata (`video_id`, `author`, `created_at`) alongside `viral_probability`, the binary prediction, and (when present) `is_viral_actual`. When actual labels exist, the CLI prints accuracy/F1/ROC-AUC so you can gauge model quality on the scored batch.
 
 ## Exploratory Analysis & Insights
 

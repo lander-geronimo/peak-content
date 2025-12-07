@@ -7,6 +7,7 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 MODEL_DEFAULT = Path("models/random_forest.joblib")
 FEATURES_DEFAULT = Path("data/features/training_set.parquet")
@@ -77,6 +78,18 @@ def main() -> None:
     result["is_viral_prediction"] = preds
     if y_true is not None:
         result["is_viral_actual"] = y_true.values
+        valid = ~y_true.isna()
+        if valid.any():
+            acc = accuracy_score(y_true[valid], preds[valid])
+            f1 = f1_score(y_true[valid], preds[valid], zero_division=0)
+            try:
+                auc = roc_auc_score(y_true[valid], proba[valid])
+            except ValueError:
+                auc = float("nan")
+            print(
+                f"Metrics on {valid.sum()} rows with labels -> "
+                f"accuracy={acc:.3f} f1={f1:.3f} roc_auc={auc:.3f}"
+            )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     result.to_csv(args.output, index=False)
