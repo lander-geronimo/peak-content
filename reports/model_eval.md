@@ -4,8 +4,8 @@
 - **Accuracy:** 1.000
 - **F1 Score:** 1.000
 - **ROC-AUC:** 1.000
-- **Confusion Matrix:** (omitted — remove `reports/figures/` for lighter repo)
-- **ROC Curve:** (omitted — regenerate locally via `src.models.evaluate`)
+- **Confusion Matrix:** (omitted — rerun with `--generate-figures` if needed)
+- **ROC Curve:** (omitted — rerun with `--generate-figures` if needed)
 
 ## Classification Report
 

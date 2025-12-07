@@ -1,4 +1,4 @@
-"""Evaluate a trained classifier against a hold-out split and create plots."""
+"""Evaluate a trained classifier against a hold-out split (plots optional)."""
 
 from __future__ import annotations
 
@@ -6,16 +6,13 @@ import argparse
 import json
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import (
-    ConfusionMatrixDisplay,
     accuracy_score,
     classification_report,
     confusion_matrix,
     f1_score,
     roc_auc_score,
-    RocCurveDisplay,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
@@ -65,6 +62,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=FIGURES_DIR_DEFAULT,
         help="Directory for confusion matrix and ROC curve images.",
+    )
+    parser.add_argument(
+        "--generate-figures",
+        action="store_true",
+        help="Generate PNGs and embed them in the markdown report.",
     )
     parser.add_argument(
         "--test-size",
@@ -138,6 +140,9 @@ def save_figures(
     y_scores: np.ndarray,
     figures_dir: Path,
 ) -> dict:
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
+
     figures_dir.mkdir(parents=True, exist_ok=True)
     cm = confusion_matrix(y_test, y_pred)
     cm_path = figures_dir / "confusion_matrix.png"
@@ -164,8 +169,9 @@ def save_figures(
 def write_markdown_report(
     report_path: Path,
     metrics: dict,
-    figures: dict,
+    figures: dict | None,
     classification_text: str,
+    include_figures: bool,
 ) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
@@ -175,13 +181,25 @@ def write_markdown_report(
         f"- **Accuracy:** {metrics['accuracy']:.3f}",
         f"- **F1 Score:** {metrics['f1']:.3f}",
         f"- **ROC-AUC:** {metrics['roc_auc']:.3f}",
-        f"- **Confusion Matrix:** ![]({figures['confusion_matrix']})",
-        f"- **ROC Curve:** ![]({figures['roc_curve']})",
-        "",
-        "## Classification Report",
-        "",
-        "```\n" + classification_text.strip() + "\n```",
     ]
+    if include_figures and figures:
+        lines.append(f"- **Confusion Matrix:** ![]({figures['confusion_matrix']})")
+        lines.append(f"- **ROC Curve:** ![]({figures['roc_curve']})")
+    else:
+        lines.append(
+            "- **Confusion Matrix:** (omitted — rerun with `--generate-figures` if needed)"
+        )
+        lines.append(
+            "- **ROC Curve:** (omitted — rerun with `--generate-figures` if needed)"
+        )
+    lines.extend(
+        [
+            "",
+            "## Classification Report",
+            "",
+            "```\n" + classification_text.strip() + "\n```",
+        ]
+    )
     report_path.write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -198,9 +216,17 @@ def main() -> None:
         test_size=args.test_size,
         seed=args.seed,
     )
-    figures = save_figures(y_test, y_pred, y_scores, args.figures_dir)
+    figures = None
+    if args.generate_figures:
+        figures = save_figures(y_test, y_pred, y_scores, args.figures_dir)
     clf_report = classification_report(y_test, y_pred, digits=3)
-    write_markdown_report(args.report, metrics, figures, clf_report)
+    write_markdown_report(
+        args.report,
+        metrics,
+        figures,
+        clf_report,
+        include_figures=args.generate_figures,
+    )
     print(f"[evaluate] {model_name} accuracy={metrics['accuracy']:.3f} f1={metrics['f1']:.3f} roc_auc={metrics['roc_auc']:.3f}")
     print(f"[evaluate] Report written to {args.report}")
 

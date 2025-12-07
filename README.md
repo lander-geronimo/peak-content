@@ -67,14 +67,14 @@ python -m src.models.train \
   --report reports/model_metrics.json
 ```
 
-Generate hold-out evaluation plots + markdown summary:
+Generate a hold-out evaluation summary (figures omitted by default to keep the repo light):
 
 ```bash
-MPLCONFIGDIR=.matplotlib python -m src.models.evaluate \
+python -m src.models.evaluate \
   --features data/features/training_set.parquet \
   --metrics reports/model_metrics.json \
   --report reports/model_eval.md \
   --figures-dir reports/figures
 ```
 
-The evaluation script creates a confusion matrix, ROC curve, and a concise report that classmates can drop into their final presentation.
+Add `--generate-figures` (and optionally `MPLCONFIGDIR=.matplotlib` on macOS sandboxes) to save PNGs for presentations. By default the script prints where to regenerate them without committing large binaries.
