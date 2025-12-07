@@ -24,3 +24,11 @@ Add new tools/libraries directly to `pyproject.toml` so every collaborator share
 ## Data Audit Notes
 
 Raw TikTok data currently lives in `data/raw/tiktok_merged_data_deduplicated.csv` (7,225 rows, 14 columns). A lightweight audit summary, including missing-value counts and example rows, is in `reports/data_audit.md`. Review that file before updating schemas or ETL logic so we keep assumptions aligned.
+
+## Loading Data into PostgreSQL
+
+1. Create a database and run the schema in `db/schema.sql`.
+2. Export your connection string as `DATABASE_URL` (e.g., `postgresql://user:pass@localhost:5432/peak_content`).
+3. Execute the loader: `python -m src.data.load_to_db --csv-path data/raw/tiktok_merged_data_deduplicated.csv`.
+
+The loader inserts creators first and then posts. It uses `ON CONFLICT DO NOTHING`, so re-running it is safe and will simply skip rows that already exist.
