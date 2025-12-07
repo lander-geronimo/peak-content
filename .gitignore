@@ -1,0 +1,3 @@
+# Ignore processed data artifacts
+data/processed/
+
