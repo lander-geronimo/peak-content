@@ -141,15 +141,19 @@ def save_figures(
     figures_dir.mkdir(parents=True, exist_ok=True)
     cm = confusion_matrix(y_test, y_pred)
     cm_path = figures_dir / "confusion_matrix.png"
-    ConfusionMatrixDisplay(cm).plot(colorbar=False)
-    plt.title("Confusion Matrix")
+    ConfusionMatrixDisplay(cm, display_labels=["Non-viral", "Viral"]).plot(colorbar=False)
+    plt.title("Confusion Matrix (Hold-out)")
+    plt.xlabel("Predicted label")
+    plt.ylabel("True label")
     plt.tight_layout()
     plt.savefig(cm_path, dpi=200)
     plt.close()
 
     roc_path = figures_dir / "roc_curve.png"
     RocCurveDisplay.from_predictions(y_test, y_scores)
-    plt.title("ROC Curve")
+    plt.title("ROC Curve (Hold-out)")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
     plt.tight_layout()
     plt.savefig(roc_path, dpi=200)
     plt.close()
