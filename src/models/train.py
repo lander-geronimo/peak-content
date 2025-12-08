@@ -25,6 +25,12 @@ FEATURE_PATH_DEFAULT = Path("data/features/training_set.parquet")
 MODEL_DIR_DEFAULT = Path("models")
 REPORT_PATH_DEFAULT = Path("reports/model_metrics.json")
 TARGET_COLUMN = "is_viral"
+DEFAULT_PREFERRED_MODEL = "logistic_regression"
+AVAILABLE_MODELS = (
+    "logistic_regression",
+    "random_forest",
+    "gradient_boosting",
+)
 
 
 @dataclass
@@ -34,6 +40,7 @@ class TrainConfig:
     report_path: Path
     cv_folds: int
     random_state: int
+    preferred_model: str
 
 
 def parse_args() -> TrainConfig:
@@ -68,6 +75,13 @@ def parse_args() -> TrainConfig:
         default=42,
         help="Random seed for reproducibility.",
     )
+    parser.add_argument(
+        "--preferred-model",
+        type=str,
+        choices=AVAILABLE_MODELS,
+        default=DEFAULT_PREFERRED_MODEL,
+        help="Which estimator to export after cross-validation, regardless of CV ranking.",
+    )
     args = parser.parse_args()
     return TrainConfig(
         feature_path=args.features,
@@ -75,6 +89,7 @@ def parse_args() -> TrainConfig:
         report_path=args.report,
         cv_folds=args.cv_folds,
         random_state=args.seed,
+        preferred_model=args.preferred_model,
     )
 
 
@@ -125,7 +140,10 @@ def build_model_registry(random_state: int) -> Dict[str, object]:
 
     return {
         "logistic_regression": LogisticRegression(
-            max_iter=500, class_weight="balanced", random_state=random_state
+            max_iter=1000,
+            class_weight="balanced",
+            solver="liblinear",
+            random_state=random_state,
         ),
         "random_forest": RandomForestClassifier(
             n_estimators=300,
@@ -177,15 +195,21 @@ def evaluate_models(
     return metrics
 
 
-def train_best_model(
+def train_selected_model(
     X: pd.DataFrame,
     y: pd.Series,
     preprocessor: ColumnTransformer,
     metrics: list[dict],
     config: TrainConfig,
 ) -> tuple[Path, str]:
-    best = max(metrics, key=lambda item: item["roc_auc"])
-    model_name = best["model"]
+    metric_lookup = {entry["model"]: entry for entry in metrics}
+    if config.preferred_model in metric_lookup:
+        model_name = config.preferred_model
+    else:
+        print(
+            f"[train] Preferred model '{config.preferred_model}' missing from metrics. Selecting by ROC-AUC instead."
+        )
+        model_name = max(metrics, key=lambda item: item["roc_auc"])["model"]
     estimator = build_model_registry(config.random_state)[model_name]
     pipeline = Pipeline(
         steps=[
@@ -198,7 +222,7 @@ def train_best_model(
     config.model_dir.mkdir(parents=True, exist_ok=True)
     model_path = config.model_dir / f"{model_name}.joblib"
     joblib.dump(pipeline, model_path)
-    print(f"[train] Saved best model '{model_name}' to {model_path}")
+    print(f"[train] Saved selected model '{model_name}' to {model_path}")
     return model_path, model_name
 
 
@@ -207,8 +231,8 @@ def write_report(
 ) -> None:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "best_model_path": str(best_model_path),
-        "best_model_name": best_model_name,
+        "selected_model_path": str(best_model_path),
+        "selected_model_name": best_model_name,
         "metrics": metrics,
     }
     with report_path.open("w", encoding="utf-8") as handle:
@@ -224,8 +248,10 @@ def main() -> None:
 
     print(f"[data] Loaded {len(df)} rows with {len(numeric_cols)} numeric and {len(categorical_cols)} categorical features.")
     metrics = evaluate_models(X, y, preprocessor, config)
-    best_model_path, best_model_name = train_best_model(X, y, preprocessor, metrics, config)
-    write_report(metrics, config.report_path, best_model_path, best_model_name)
+    selected_model_path, selected_model_name = train_selected_model(
+        X, y, preprocessor, metrics, config
+    )
+    write_report(metrics, config.report_path, selected_model_path, selected_model_name)
 
 
 if __name__ == "__main__":

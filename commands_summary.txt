@@ -5,12 +5,12 @@
    - Constructs temporal/content/engagement features, trend spike signals, and creates the training label `is_viral`.
 
 3. Train models -> python3 -m src.models.train --features data/features/training_set.parquet --model-dir models --report reports/model_metrics.json
-   - Runs Stratified 5-fold CV across Logistic Regression, Random Forest, and Gradient Boosting, logging metrics and saving the best pipeline.
+   - Runs Stratified 5-fold CV across Logistic Regression, Random Forest, and Gradient Boosting, then exports the preferred (logistic) pipeline to avoid overfitting.
 
 4. Evaluate -> python3 -m src.models.evaluate --features data/features/training_set.parquet --metrics reports/model_metrics.json --report reports/model_eval.md
    - Uses a hold-out split to report accuracy/F1/ROC-AUC and, with --generate-figures, saves confusion matrix & ROC curve.
 
-5. Predict (batch) -> python3 -m src.models.predict --model models/random_forest.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print
+5. Predict (batch) -> python3 -m src.models.predict --model models/logistic_regression.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print
    - Scores every row, writes `viral_probability` & predictions; prints metrics if ground truth labels exist. Supports --video-id, --single-json, and --prompt for interactive testing.
 
 6. Dashboard / CLI insights

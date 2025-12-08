@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
-MODEL_DEFAULT = Path("models/random_forest.joblib")
+MODEL_DEFAULT = Path("models/logistic_regression.joblib")
 FEATURES_DEFAULT = Path("data/features/training_set.parquet")
 OUTPUT_DEFAULT = Path("reports/predictions.csv")
 

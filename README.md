@@ -33,7 +33,7 @@ Minimal checklist (update paths as needed):
 2. Build features/trends → `python -m src.features.build_features --input data/processed/posts.parquet --output data/features/training_set.parquet --trend-summary reports/trend_metrics.json`
 3. Train models → `python -m src.models.train --features data/features/training_set.parquet --model-dir models --report reports/model_metrics.json`
 4. Evaluate → `python -m src.models.evaluate --features data/features/training_set.parquet --metrics reports/model_metrics.json --report reports/model_eval.md`
-5. Score posts → `python -m src.models.predict --model models/random_forest.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print`
+5. Score posts → `python3 -m src.models.predict --model models/logistic_regression.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print`
 6. Optional visuals → `python -m src.visualization.dashboard --mode cli` or run the notebook/Streamlit app.
 
 ## Troubleshooting
@@ -76,7 +76,7 @@ The loader inserts creators first and then posts. It uses `ON CONFLICT DO NOTHIN
 
 ## Model Training & Evaluation
 
-Train Logistic Regression, Random Forest, and Gradient Boosting classifiers, log cross-validation metrics, and persist the best pipeline (default: `models/random_forest.joblib`):
+Train Logistic Regression, Random Forest, and Gradient Boosting classifiers, log cross-validation metrics, and persist the selected pipeline (default deployment: `models/logistic_regression.joblib` to avoid overfitting on this dataset):
 
 ```bash
 python -m src.models.train \
@@ -84,6 +84,8 @@ python -m src.models.train \
   --model-dir models \
   --report reports/model_metrics.json
 ```
+
+By default we persist the Logistic Regression pipeline because it generalizes better (tree ensembles hit 100% accuracy on this static scrape). Pass `--preferred-model random_forest` if you intentionally want a different estimator saved.
 
 Generate a hold-out evaluation summary (figures omitted by default to keep the repo light):
 
@@ -105,11 +107,11 @@ Add `--generate-figures` (and optionally `MPLCONFIGDIR=.matplotlib` on macOS san
 
 ## Scoring New Posts
 
-Use the prediction helper to load the saved pipeline (`models/random_forest.joblib`) and score any feature matrix that matches the training schema:
+Use the prediction helper to load the saved pipeline (`models/logistic_regression.joblib`) and score any feature matrix that matches the training schema:
 
 ```bash
-python -m src.models.predict \
-  --model models/random_forest.joblib \
+python3 -m src.models.predict \
+  --model models/logistic_regression.joblib \
   --features data/features/training_set.parquet \
   --output reports/predictions.csv
 ```
@@ -119,8 +121,8 @@ Pass a different parquet path (e.g., from a new scrape) and optional `--limit` t
 Score a **specific video id** (or a handful) by adding `--video-id`:
 
 ```bash
-python -m src.models.predict \
-  --model models/random_forest.joblib \
+python3 -m src.models.predict \
+  --model models/logistic_regression.joblib \
   --features data/features/training_set.parquet \
   --video-id 7506183500660313390,7507316543605280030 \
   --print
@@ -129,8 +131,8 @@ python -m src.models.predict \
 Score a **single, hypothetical post** defined in JSON:
 
 ```bash
-python -m src.models.predict \
-  --model models/random_forest.joblib \
+python3 -m src.models.predict \
+  --model models/logistic_regression.joblib \
   --single-json inputs/sample_post.json
 ```
 
@@ -139,7 +141,7 @@ The JSON can be a single dict or a list of dicts containing the same feature fie
 Interactively score a post from the terminal (no file needed):
 
 ```bash
-python -m src.models.predict --model models/random_forest.joblib --prompt
+python3 -m src.models.predict --model models/logistic_regression.joblib --prompt
 ```
 
 You’ll be prompted for a handful of key fields (posting hour, weekday, hashtag/audio flags, engagement stats). Press Enter to accept defaults, and the CLI will output the viral probability immediately.

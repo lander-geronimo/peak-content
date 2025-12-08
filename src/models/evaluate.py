@@ -92,10 +92,10 @@ def resolve_model_name(args_model_name: str | None, metrics_path: Path) -> str:
         )
     with metrics_path.open() as handle:
         payload = json.load(handle)
-    model_name = payload.get("best_model_name")
+    model_name = payload.get("selected_model_name") or payload.get("best_model_name")
     if not model_name:
         raise ValueError(
-            "Unable to find best_model_name in metrics JSON. Re-run training or pass --model-name."
+            "Unable to find selected model name in metrics JSON. Re-run training or pass --model-name."
         )
     return model_name
 
