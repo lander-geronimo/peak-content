@@ -25,6 +25,24 @@ Add new tools/libraries directly to `pyproject.toml` so every collaborator share
 
 Raw TikTok data currently lives in `data/raw/tiktok_merged_data_deduplicated.csv` (7,225 rows, 14 columns). A lightweight audit summary, including missing-value counts and example rows, is in `reports/data_audit.md`. Review that file before updating schemas or ETL logic so we keep assumptions aligned.
 
+## Pipeline Runbook
+
+Minimal checklist (update paths as needed):
+
+1. Clean raw data → `python -m src.etl.clean_tiktok --input data/raw/tiktok_merged_data_deduplicated.csv --output data/processed/posts.parquet`
+2. Build features/trends → `python -m src.features.build_features --input data/processed/posts.parquet --output data/features/training_set.parquet --trend-summary reports/trend_metrics.json`
+3. Train models → `python -m src.models.train --features data/features/training_set.parquet --model-dir models --report reports/model_metrics.json`
+4. Evaluate → `python -m src.models.evaluate --features data/features/training_set.parquet --metrics reports/model_metrics.json --report reports/model_eval.md`
+5. Score posts → `python -m src.models.predict --model models/random_forest.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print`
+6. Optional visuals → `python -m src.visualization.dashboard --mode cli` or run the notebook/Streamlit app.
+
+## Troubleshooting
+
+- `python: command not found` → use `python3`.
+- SSL cert errors → `GIT_SSL_NO_VERIFY=true git pull ...` or install with `--trusted-host`.
+- Matplotlib cache issue → `MPLCONFIGDIR=.matplotlib python3 -m ...`.
+- Missing packages → `python3 -m pip install -e .` or `python3 -m pip install seaborn streamlit`.
+
 ## Cleaning Raw Data
 
 Run the ETL cleaner to standardize timestamps, hashtags, and engagement velocity, and to emit a `Parquet` artifact for modeling:
@@ -79,6 +97,12 @@ python -m src.models.evaluate \
 
 Add `--generate-figures` (and optionally `MPLCONFIGDIR=.matplotlib` on macOS sandboxes) to save PNGs for presentations. By default the script prints where to regenerate them without committing large binaries.
 
+## Key Insights (latest run)
+
+- **Best hours to post** (UTC): 9–11 AM and 2 PM show the highest average engagement velocity and viral probability (see `reports/trend_metrics.json` or the dashboard).
+- **Best weekdays**: Tuesday and Wednesday outperform others, with Saturday as a strong weekend option.
+- **Trending hashtags/audio**: The CLI dashboard surfaces the top spikes daily; use `python -m src.visualization.dashboard --mode cli` to refresh.
+
 ## Scoring New Posts
 
 Use the prediction helper to load the saved pipeline (`models/random_forest.joblib`) and score any feature matrix that matches the training schema:
@@ -131,3 +155,4 @@ python -m src.visualization.dashboard --mode cli        # terminal summary
 ```
 
 Add `--mode streamlit` if you launch via `python -m ...` so it always renders the browser UI. The same trend insights (best hours/days, trending hashtags/audio) power both modes.
+
