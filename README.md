@@ -92,6 +92,34 @@ python -m src.models.predict \
 
 Pass a different parquet path (e.g., from a new scrape) and optional `--limit` to score only the latest rows. The output CSV contains metadata (`video_id`, `author`, `created_at`) alongside `viral_probability`, the binary prediction, and (when present) `is_viral_actual`. When actual labels exist, the CLI prints accuracy/F1/ROC-AUC so you can gauge model quality on the scored batch.
 
+Score a **specific video id** (or a handful) by adding `--video-id`:
+
+```bash
+python -m src.models.predict \
+  --model models/random_forest.joblib \
+  --features data/features/training_set.parquet \
+  --video-id 7506183500660313390,7507316543605280030 \
+  --print
+```
+
+Score a **single, hypothetical post** defined in JSON:
+
+```bash
+python -m src.models.predict \
+  --model models/random_forest.joblib \
+  --single-json inputs/sample_post.json
+```
+
+The JSON can be a single dict or a list of dicts containing the same feature fields used during training (e.g., `created_hour`, `created_weekday`, `hashtag_count`, `audio_popularity`, etc.). The command prints the predicted viral probability to stdout.
+
+Interactively score a post from the terminal (no file needed):
+
+```bash
+python -m src.models.predict --model models/random_forest.joblib --prompt
+```
+
+You’ll be prompted for a handful of key fields (posting hour, weekday, hashtag/audio flags, engagement stats). Press Enter to accept defaults, and the CLI will output the viral probability immediately.
+
 ## Exploratory Analysis & Insights
 
 - Explore engagement vs. time/day and trending hashtags/audio in `notebooks/eda_best_time.ipynb`.
