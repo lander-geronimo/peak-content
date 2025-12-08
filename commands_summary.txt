@@ -13,5 +13,7 @@
 5. Predict (batch) -> python3 -m src.models.predict --model models/random_forest.joblib --features data/features/training_set.parquet --output reports/predictions.csv --print
    - Scores every row, writes `viral_probability` & predictions; prints metrics if ground truth labels exist. Supports --video-id, --single-json, and --prompt for interactive testing.
 
-6. Dashboard / CLI insights -> python3 -m src.visualization.dashboard --mode cli
+6. Dashboard / CLI insights
+CLI -> python3 -m src.visualization.dashboard --mode cli
+Streamlit -> /Users/jessegraham/Library/Python/3.9/bin/streamlit run src/visualization/dashboard.py -- --mode streamlit
    - Reads `reports/trend_metrics.json` & feature data to show best hours/days and trending hashtags/audio.
