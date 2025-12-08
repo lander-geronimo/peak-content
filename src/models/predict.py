@@ -121,6 +121,17 @@ def prompt_for_features() -> Dict[str, Any]:
         return 1 if raw in {"1", "true", "True"} else 0
 
     print("Provide feature values (press Enter to accept defaults if unsure).")
+    likes = ask_float("Likes observed", 500.0)
+    comments = ask_float("Comments observed", 30.0)
+    shares = ask_float("Shares observed", 10.0)
+    plays = ask_float("Plays observed", 15000.0)
+    hours_live = ask_float("Hours live when captured", 3.0)
+
+    engagement_total = likes + comments + shares
+    engagement_rate = engagement_total / plays if plays else 0.0
+    velocity_mean = engagement_total / hours_live if hours_live else 0.0
+    log_plays = math.log(plays + 1)
+
     features: Dict[str, Any] = {
         "created_hour": ask_int("Posting hour (0-23)", 12),
         "created_weekday": ask_int("Weekday (0=Mon ... 6=Sun)", 3),
@@ -134,15 +145,15 @@ def prompt_for_features() -> Dict[str, Any]:
         "contains_question": ask_bool("Contains question mark?", 0),
         "contains_exclamation": ask_bool("Contains exclamation?", 1),
         "contains_cta": ask_bool("Contains call-to-action?", 0),
-        "likes": ask_float("Likes observed", 500.0),
-        "comments": ask_float("Comments observed", 30.0),
-        "shares": ask_float("Shares observed", 10.0),
-        "plays": ask_float("Plays observed", 15000.0),
-        "engagement_total": ask_float("Engagement total (likes+comments+shares)", 540.0),
-        "engagement_rate": ask_float("Engagement rate", 0.04),
-        "velocity_mean": ask_float("Engagement velocity", 60.0),
-        "log_plays": ask_float("log(plays+1)", 10.5),
-        "hours_live": ask_float("Hours live when captured", 3.0),
+        "likes": likes,
+        "comments": comments,
+        "shares": shares,
+        "plays": plays,
+        "engagement_total": engagement_total,
+        "engagement_rate": engagement_rate,
+        "velocity_mean": velocity_mean,
+        "log_plays": log_plays,
+        "hours_live": hours_live,
         # Derived features with defaults
         "hashtag_popularity_mean": 40.0,
         "hashtag_trend_score": 1.0,
